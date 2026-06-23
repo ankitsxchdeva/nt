@@ -70,14 +70,6 @@ body {
     display: inline-block;
 }
 
-.bookmark-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 60%;
-    margin: 1em 0em;
-}
-
 @media only screen and (max-width: 960px) {
     .container {
         height: auto;
@@ -85,46 +77,6 @@ body {
     #clock {
         margin-top: 1em;
     }
-    .container > .bookmark-container {
-        flex-direction: column;
-        width: 60%;
-    }
-    .bookmark-container > .bookmark-set {
-        width: auto;
-        margin: 1em 0em;
-    }
-}
-
-.bookmark-set{
-    padding: 1em;
-    background-color: #3b4252;
-    border-radius: 3px;
-    font-family: "Roboto Mono";
-    font-size: .85rem;
-    width: 25%;
-    height: 16em;
-    margin: 0em .5em;
-}
-.bookmark-inner-container {
-    overflow-y: scroll;
-    height: 80%;
-    vertical-align: top;
-}
-.bookmark-title {
-    font-family: "Roboto";
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #81a1c1;
-    margin: 0em 0em .35em 0em;
-}
-.bookmark {
-    text-decoration: none;
-    color: #5e81ac;
-    display:block;
-    margin: .4em 0em;
-}
-.bookmark:hover {
-    color: #d8dee9;
 }
 
 .city-name {

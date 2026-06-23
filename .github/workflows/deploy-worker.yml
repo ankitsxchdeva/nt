@@ -1,0 +1,26 @@
+name: Deploy Worker
+
+# Auto-deploys the weather proxy whenever the worker changes.
+# Requires a repo secret CLOUDFLARE_API_TOKEN (Cloudflare dashboard ->
+# My Profile -> API Tokens -> "Edit Cloudflare Workers" template).
+# The OWM_API_KEY secret is set once with `wrangler secret put` and persists
+# on Cloudflare across deploys, so it does not need to live in GitHub.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - '.github/workflows/deploy-worker.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: worker

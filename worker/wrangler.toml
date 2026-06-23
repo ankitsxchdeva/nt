@@ -1,0 +1,6 @@
+name = "nt-weather"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# The API key is NOT stored here. Set it as an encrypted secret instead:
+#     cd worker && wrangler secret put OWM_API_KEY

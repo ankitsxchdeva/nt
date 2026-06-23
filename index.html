@@ -22,54 +22,6 @@
                 <div id="temp" class="inline"></div>
             </div>
         </div>
-        <div class="bookmark-container">
-            <div class="bookmark-set">
-                <div class="bookmark-title">School</div>
-                <div class="bookmark-inner-container">
-                    <a class="bookmark" href="https://mail.gatech.edu/" target="_blank">outlook</a>
-                    <a class="bookmark" href="https://gatech.enterprise.slack.com/" target="_blank">slack</a>
-                    <a class="bookmark" href="https://oscar.gatech.edu/" target="_blank">oscar</a>
-                    <a class="bookmark" href="https://canvas.gatech.edu/" target="_blank">canvas</a>
-                    <a class="bookmark" href="https://sso.gatech.edu/cas/login?service=https%3A%2F%2Fdegreeaudit.gatech.edu%2Flogin%2Fcas" target="_blank">degree works</a>
-                    <a class="bookmark" href="https://passport.gatech.edu/" target="_blank">passport</a>
-                    <a class="bookmark" href="https://docs.google.com/document/d/1q0y3AlNPT0FGjeKJGFngzRJU54wrWwFRuxn94FthxEE/edit" target="_blank">planning</a>
-                </div>
-            </div>
-
-            <div class="bookmark-set">
-                <div class="bookmark-title">dynaConnections</div>
-                    <a class="bookmark" href="https://bitbucket.org/dynaconnections/connectmls.regression/src/8ddc69b0f834f745ded97edb93b2526f390db92d/?at=release%2Fdev" target="_blank">automation</a>
-                    <a class="bookmark" href="https://dynaconnections.atlassian.net/wiki/spaces/QA/pages/2327085057/Test+Checklists" target="_blank">confluence</a>
-                    <a class="bookmark" href="https://dynaconnections.atlassian.net/jira/software/c/projects/AT/boards/33" target="_blank">kanban</a>
-                    <a class="bookmark" href="https://mred-dev.connectmls.com/" target="_blank">MRED</a>
-                    <a class="bookmark" href="https://mibor-dev.connectmls.com/" target="_blank">MIBOR</a>
-                    <a class="bookmark" href="https://smartmls-dev.connectmls.com/" target="_blank">smartMLS</a>
-                <div class="bookmark-inner-container">
-                </div>
-            </div>
-            
-            <div class="bookmark-set">
-                <div class="bookmark-title">Job Search</div>
-                <div class="bookmark-inner-container">
-                    <a class="bookmark" href="https://youtu.be/o_73FeXw3ZI?si=RwuR0amkTpQGaEm1&t=61" target="_blank">morning yoga</a>
-                    <a class="bookmark" href="https://subs.swingeducation.com/#/" target="_blank">swing</a>
-                    <a class="bookmark" href="https://workforcenow.adp.com/theme/index.html#/Myself/PayandAnnualStatements" target="_blank">adp</a>
-                    <a class="bookmark" href="https://docs.google.com/spreadsheets/d/1J5GXOhb9NfyqIAi0Tnw3SSuezUsMrPP_uuGYFQI1q0k/edit?gid=0#gid=0" target="_blank">applied</a>
-                    <a class="bookmark" href="https://docs.google.com/spreadsheets/d/1mU0lvsgIC0nGp9rDO54SA67HPvnSd6B1X5ldNPQYGiQ/edit?gid=0#gid=0" target="_blank"> apply</a>
-                </div>
-            </div>
-
-            <div class="bookmark-set">
-                <div class="bookmark-title">Code</div>
-                <div class="bookmark-inner-container">
-                  <a class="bookmark" href="https://news.ycombinator.com/" target="_blank">hacker news</a>
-                  <a class="bookmark" href="https://xkcd.com/" target="_blank">xkcd</a>
-                  <a class="bookmark" href="https://leetcode.com/discuss/general-discussion/460599/blind-75-leetcode-questions" target="_blank">blind 75</a>
-                  <a class="bookmark" href="https://designgurus.org/course/grokking-the-coding-interview" target="_blank">grokking</a>
-                  <a class="bookmark" href="https://leetcode.com/problemset/all/" target="_blank">leetcode</a>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -93,8 +45,9 @@
 
         window.onload = () => {
             let xhr = new XMLHttpRequest();
-            // Request to open weather map
-            xhr.open('GET', 'https://api.openweathermap.org/data/2.5/weather?id=4671654&units=imperial&appid=44c9f50e295f8a812f54e3683316132e');
+            // Weather is fetched through a Cloudflare Worker proxy that keeps the
+            // OpenWeatherMap API key as a secret, so the key never ships to the browser.
+            xhr.open('GET', 'https://nt-weather.ankitsachdeva001.workers.dev');
             xhr.onload = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
