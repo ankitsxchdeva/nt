@@ -46,10 +46,8 @@
         window.onload = () => {
             let xhr = new XMLHttpRequest();
             // Weather is fetched through a Cloudflare Worker proxy that keeps the
-            // OpenWeatherMap API key as a secret, so the key never ships to the
-            // browser. Replace YOUR-SUBDOMAIN with your workers.dev subdomain
-            // (see the URL printed by `wrangler deploy`).
-            xhr.open('GET', 'https://nt-weather.YOUR-SUBDOMAIN.workers.dev');
+            // OpenWeatherMap API key as a secret, so the key never ships to the browser.
+            xhr.open('GET', 'https://nt-weather.ankitsachdeva001.workers.dev');
             xhr.onload = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {

@@ -12,9 +12,16 @@ Setup (free — Cloudflare Workers free tier):
 cd worker
 npm install -g wrangler        # if you don't have it
 wrangler login
-wrangler secret put OWM_API_KEY # paste your OpenWeatherMap key when prompted
+
+# OWM_API_KEY is the secret NAME, not the value. Paste the key when prompted:
+wrangler secret put OWM_API_KEY
+
 wrangler deploy
 ```
+First deploy only: if wrangler reports you have no `workers.dev` subdomain,
+register one at the dashboard link it prints (one-time), then re-run
+`wrangler deploy`.
+
 Then put the deployed `*.workers.dev` URL into the `xhr.open(...)` call in
 `index.html` (replace `YOUR-SUBDOMAIN`).
 
