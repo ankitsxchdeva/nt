@@ -1,10 +1,11 @@
 name: Deploy Worker
 
 # Auto-deploys the weather proxy whenever the worker changes.
-# Requires a repo secret CLOUDFLARE_API_TOKEN (Cloudflare dashboard ->
-# My Profile -> API Tokens -> "Edit Cloudflare Workers" template).
-# The OWM_API_KEY secret is set once with `wrangler secret put` and persists
-# on Cloudflare across deploys, so it does not need to live in GitHub.
+# To enable deploys, add a repo secret CLOUDFLARE_API_TOKEN (Cloudflare dashboard
+# -> My Profile -> API Tokens -> "Edit Cloudflare Workers" template).
+# Until that secret exists, the deploy step is skipped so CI stays green.
+# The OWM_API_KEY secret is set once with `wrangler secret put` and persists on
+# Cloudflare across deploys, so it does not need to live in GitHub.
 
 on:
   push:
@@ -17,10 +18,20 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Skip deploy (no Cloudflare token)
+        if: ${{ env.CLOUDFLARE_API_TOKEN == '' }}
+        run: |
+          echo "CLOUDFLARE_API_TOKEN is not set — skipping deploy."
+          echo "Add it under Settings -> Secrets and variables -> Actions to enable auto-deploy."
+
       - name: Deploy Worker
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' }}
         uses: cloudflare/wrangler-action@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           workingDirectory: worker
