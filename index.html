@@ -13,14 +13,9 @@
     <div id="search">
         <input id="search-field" type="text" name="search-field"/>
     </div>
-    <!-- Aurora borealis: drifting Frost + Aurora light curtains over the Polar Night -->
-    <div class="aurora" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span>
-    </div>
-    <!-- Drifting snow (Snow Storm) -->
+    <!-- Drifting, softly glowing Frost particles over flat Polar Night -->
     <canvas id="snow" aria-hidden="true"></canvas>
     <div class="container">
-        <div id="greeting"></div>
         <div id="clock"></div>
         <div id="date"></div>
         <div class="weather-container">
@@ -51,55 +46,86 @@
                 (min < 10 ? ("0" + min) : min)
         }
 
-        // Greeting based on the hour + a long-form date line
-        const updateDateGreeting = () => {
-            let now = new Date(),
-                h = now.getHours(),
-                greeting = h < 5 ? "Good night" :
-                           h < 12 ? "Good morning" :
-                           h < 18 ? "Good afternoon" : "Good evening";
-            document.getElementById("greeting").innerHTML = greeting;
-            document.getElementById("date").innerHTML = now.toLocaleDateString(undefined, {
+        // Long-form date line under the clock
+        const updateDate = () => {
+            document.getElementById("date").innerHTML = new Date().toLocaleDateString(undefined, {
                 weekday: "long", month: "long", day: "numeric"
             });
         }
 
-        // ---- Drifting snow (Nord "Snow Storm") ----
-        (function snow() {
+        // ---- Abstract Frost particle field: drifting, glowing, twinkling points ----
+        (function particles() {
             const canvas = document.getElementById("snow"),
                   ctx = canvas.getContext("2d");
-            let flakes = [], w, h;
+            // Nord Frost + Aurora — all the light/color comes from the particles themselves
+            const palette = [
+                "143, 188, 187",  // frost  nord7
+                "136, 192, 208",  // frost  nord8
+                "129, 161, 193",  // frost  nord9
+                "94, 129, 172",   // frost  nord10
+                "163, 190, 140",  // aurora green  nord14
+                "180, 142, 173",  // aurora purple nord15
+                "235, 203, 139",  // aurora yellow nord13
+                "216, 222, 233"   // snow storm    nord4
+            ];
+            let pts = [], w, h;
             const resize = () => {
                 w = canvas.width = window.innerWidth;
                 h = canvas.height = window.innerHeight;
-                const count = Math.round((w * h) / 22000);
-                flakes = Array.from({ length: count }, () => ({
-                    x: Math.random() * w,
-                    y: Math.random() * h,
-                    r: Math.random() * 2.2 + 0.6,
-                    sx: Math.random() * 0.4 - 0.2,
-                    sy: Math.random() * 0.7 + 0.25,
-                    o: Math.random() * 0.5 + 0.2
-                }));
+                const count = Math.round((w * h) / 17000);
+                pts = Array.from({ length: count }, (_, i) => {
+                    const orb = i % 7 === 0;                  // ~1 in 7 is a bigger glowing orb
+                    return {
+                        x: Math.random() * w,
+                        y: Math.random() * h,
+                        r: orb ? Math.random() * 2.2 + 2.4 : Math.random() * 1.6 + 0.8,
+                        a: Math.random() * Math.PI * 2,       // drift heading
+                        v: Math.random() * 0.18 + 0.05,       // drift speed
+                        c: palette[Math.floor(Math.random() * palette.length)],
+                        base: orb ? Math.random() * 0.3 + 0.55 : Math.random() * 0.4 + 0.4,
+                        tw: Math.random() * 0.025 + 0.008,    // twinkle speed
+                        ph: Math.random() * Math.PI * 2,      // twinkle phase
+                        glow: orb ? 8 : 6                     // glow radius multiplier
+                    };
+                });
             };
             const draw = () => {
                 ctx.clearRect(0, 0, w, h);
-                for (const f of flakes) {
+                for (const p of pts) {
+                    p.ph += p.tw;
+                    const o = p.base + Math.sin(p.ph) * 0.25;
                     ctx.beginPath();
-                    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-                    ctx.fillStyle = "rgba(236, 239, 244, " + f.o + ")";
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(" + p.c + ", " + Math.min(Math.max(o, 0.08), 1) + ")";
+                    ctx.shadowColor = "rgba(" + p.c + ", 1)";
+                    ctx.shadowBlur = p.r * p.glow;            // the glow lives on the particle
                     ctx.fill();
-                    f.x += f.sx;
-                    f.y += f.sy;
-                    if (f.y > h + 5) { f.y = -5; f.x = Math.random() * w; }
-                    if (f.x > w + 5) f.x = -5;
-                    if (f.x < -5) f.x = w + 5;
+                    p.x += Math.cos(p.a) * p.v;
+                    p.y += Math.sin(p.a) * p.v;
+                    if (p.x < -10) p.x = w + 10;
+                    if (p.x > w + 10) p.x = -10;
+                    if (p.y < -10) p.y = h + 10;
+                    if (p.y > h + 10) p.y = -10;
                 }
+                ctx.shadowBlur = 0;
                 requestAnimationFrame(draw);
+            };
+            const drawStatic = () => {
+                ctx.clearRect(0, 0, w, h);
+                for (const p of pts) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(" + p.c + ", " + p.base + ")";
+                    ctx.shadowColor = "rgba(" + p.c + ", 1)";
+                    ctx.shadowBlur = p.r * p.glow;
+                    ctx.fill();
+                }
+                ctx.shadowBlur = 0;
             };
             window.addEventListener("resize", resize);
             resize();
-            if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) draw();
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) drawStatic();
+            else draw();
         })();
 
         window.onload = () => {
@@ -132,13 +158,13 @@
                 document.getElementById("weather-description").innerHTML = "Weather unavailable";
             }
             xhr.send();
-            // Set up the clock + date/greeting
+            // Set up the clock + date
             document.getElementById("clock").innerHTML = getTime();
-            updateDateGreeting();
+            updateDate();
             // Set clock interval to tick clock
             setInterval( () => {
                 document.getElementById("clock").innerHTML = getTime();
-                updateDateGreeting();
+                updateDate();
             },1000);
         }
 
