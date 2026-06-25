@@ -13,8 +13,16 @@
     <div id="search">
         <input id="search-field" type="text" name="search-field"/>
     </div>
+    <!-- Aurora borealis: drifting Frost + Aurora light curtains over the Polar Night -->
+    <div class="aurora" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <!-- Drifting snow (Snow Storm) -->
+    <canvas id="snow" aria-hidden="true"></canvas>
     <div class="container">
+        <div id="greeting"></div>
         <div id="clock"></div>
+        <div id="date"></div>
         <div class="weather-container">
             <div class="row">
                 <div id="weather-description"class="inline"></div>
@@ -42,6 +50,57 @@
                 ((hour + 24) % 12 || 12) + ":" +
                 (min < 10 ? ("0" + min) : min)
         }
+
+        // Greeting based on the hour + a long-form date line
+        const updateDateGreeting = () => {
+            let now = new Date(),
+                h = now.getHours(),
+                greeting = h < 5 ? "Good night" :
+                           h < 12 ? "Good morning" :
+                           h < 18 ? "Good afternoon" : "Good evening";
+            document.getElementById("greeting").innerHTML = greeting;
+            document.getElementById("date").innerHTML = now.toLocaleDateString(undefined, {
+                weekday: "long", month: "long", day: "numeric"
+            });
+        }
+
+        // ---- Drifting snow (Nord "Snow Storm") ----
+        (function snow() {
+            const canvas = document.getElementById("snow"),
+                  ctx = canvas.getContext("2d");
+            let flakes = [], w, h;
+            const resize = () => {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+                const count = Math.round((w * h) / 22000);
+                flakes = Array.from({ length: count }, () => ({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 2.2 + 0.6,
+                    sx: Math.random() * 0.4 - 0.2,
+                    sy: Math.random() * 0.7 + 0.25,
+                    o: Math.random() * 0.5 + 0.2
+                }));
+            };
+            const draw = () => {
+                ctx.clearRect(0, 0, w, h);
+                for (const f of flakes) {
+                    ctx.beginPath();
+                    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(236, 239, 244, " + f.o + ")";
+                    ctx.fill();
+                    f.x += f.sx;
+                    f.y += f.sy;
+                    if (f.y > h + 5) { f.y = -5; f.x = Math.random() * w; }
+                    if (f.x > w + 5) f.x = -5;
+                    if (f.x < -5) f.x = w + 5;
+                }
+                requestAnimationFrame(draw);
+            };
+            window.addEventListener("resize", resize);
+            resize();
+            if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) draw();
+        })();
 
         window.onload = () => {
             let xhr = new XMLHttpRequest();
@@ -73,12 +132,14 @@
                 document.getElementById("weather-description").innerHTML = "Weather unavailable";
             }
             xhr.send();
-            // Set up the clock
+            // Set up the clock + date/greeting
             document.getElementById("clock").innerHTML = getTime();
+            updateDateGreeting();
             // Set clock interval to tick clock
             setInterval( () => {
                 document.getElementById("clock").innerHTML = getTime();
-            },100);
+                updateDateGreeting();
+            },1000);
         }
 
         document.addEventListener("keydown", event => {
