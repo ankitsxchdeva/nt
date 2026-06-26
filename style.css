@@ -109,8 +109,20 @@ body {
     text-align: center;
 }
 
-.weather-container {
-    min-width: 14em;
+/* Fixed top-left stack of info boxes (weather + tracked tickers) */
+.panel {
+    position: fixed;
+    top: 1.5em;
+    left: 1.5em;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;   /* every box matches the width of the widest */
+    gap: 0.9em;
+}
+
+.box {
+    min-width: 13em;
     background-color: rgba(67, 76, 94, 0.45);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(136, 192, 208, 0.18);
@@ -121,6 +133,26 @@ body {
     color: var(--nord8);
     text-align: center;
 }
+
+/* ---- Stock / ETF boxes ---- */
+.ticker {
+    font-family: "Roboto Mono";
+    font-size: 0.9rem;
+    letter-spacing: 0.2rem;
+    color: var(--nord7);
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+.price {
+    color: var(--nord6);
+}
+.change {
+    font-size: 0.85rem;
+    margin-top: 3px;
+}
+.change.up   { color: var(--nord14); }   /* aurora green */
+.change.down { color: var(--nord11); }   /* aurora red */
+
 .inline {
     display: inline-block;
 }
@@ -134,6 +166,15 @@ body {
     #clock {
         font-size: 4.5rem;
         margin-top: 1em;
+    }
+    /* Drop the panel into normal flow so it doesn't cover the clock */
+    .panel {
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 1.5em 1em 0;
     }
 }
 

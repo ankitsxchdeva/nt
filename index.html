@@ -15,16 +15,29 @@
     </div>
     <!-- Drifting, softly glowing Frost particles over flat Polar Night -->
     <canvas id="snow" aria-hidden="true"></canvas>
-    <div class="container">
-        <div id="clock"></div>
-        <div id="date"></div>
-        <div class="weather-container">
+    <!-- Top-left stack: weather, then tracked tickers -->
+    <div class="panel">
+        <div class="box" id="weather">
             <div class="row">
-                <div id="weather-description"class="inline"></div>
+                <div id="weather-description" class="inline"></div>
                 <div class="inline">-</div>
                 <div id="temp" class="inline"></div>
             </div>
         </div>
+        <div class="box stock" id="voo">
+            <div class="ticker">VOO</div>
+            <div class="price">—</div>
+            <div class="change"></div>
+        </div>
+        <div class="box stock" id="smh">
+            <div class="ticker">SMH</div>
+            <div class="price">—</div>
+            <div class="change"></div>
+        </div>
+    </div>
+    <div class="container">
+        <div id="clock"></div>
+        <div id="date"></div>
     </div>
 
     <script>
@@ -51,6 +64,39 @@
             document.getElementById("date").innerHTML = new Date().toLocaleDateString(undefined, {
                 weekday: "long", month: "long", day: "numeric"
             });
+        }
+
+        // Fetch an ETF/stock quote through the same Worker proxy (keeps us off
+        // the data provider directly — no key in the page, no CORS headache).
+        const loadStock = (symbol, boxId) => {
+            let box = document.getElementById(boxId),
+                priceEl = box.querySelector(".price"),
+                changeEl = box.querySelector(".change");
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://nt-weather.ankitsachdeva001.workers.dev/?symbol=' + symbol);
+            xhr.onload = () => {
+                if (xhr.readyState !== 4) return;
+                if (xhr.status === 200) {
+                    let json = JSON.parse(xhr.responseText),
+                        price = json.price,
+                        prev = json.previousClose;
+                    if (price == null || prev == null) { priceEl.innerHTML = "N/A"; return; }
+                    let change = price - prev,
+                        pct = (change / prev) * 100,
+                        sign = change >= 0 ? "+" : "";
+                    priceEl.innerHTML = "$" + price.toFixed(2);
+                    changeEl.innerHTML = sign + change.toFixed(2) + " (" + sign + pct.toFixed(2) + "%)";
+                    changeEl.className = "change " + (change >= 0 ? "up" : "down");
+                } else {
+                    console.error('Stock API Error:', symbol, xhr.status);
+                    priceEl.innerHTML = "N/A";
+                }
+            }
+            xhr.onerror = () => {
+                console.error('Stock API Request Failed:', symbol);
+                priceEl.innerHTML = "N/A";
+            }
+            xhr.send();
         }
 
         // ---- Abstract Frost particle field: drifting, glowing, twinkling points ----
@@ -144,7 +190,7 @@
                         let cityName = document.createElement('div');
                         cityName.className = 'city-name';
                         cityName.innerHTML = `${json.name}, TX`;
-                        document.querySelector('.weather-container').appendChild(cityName);
+                        document.getElementById('weather').appendChild(cityName);
                     } else {
                         console.error('Weather API Error:', xhr.status);
                         document.getElementById("temp").innerHTML = "N/A";
@@ -158,6 +204,9 @@
                 document.getElementById("weather-description").innerHTML = "Weather unavailable";
             }
             xhr.send();
+            // Tracked tickers, refreshed alongside the page load
+            loadStock("VOO", "voo");
+            loadStock("SMH", "smh");
             // Set up the clock + date
             document.getElementById("clock").innerHTML = getTime();
             updateDate();
