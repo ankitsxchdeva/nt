@@ -15,8 +15,8 @@
     </div>
     <!-- Drifting, softly glowing Frost particles over flat Polar Night -->
     <canvas id="snow" aria-hidden="true"></canvas>
-    <!-- Top-left stack: weather, then tracked tickers -->
-    <div class="panel">
+    <!-- Top-left: weather -->
+    <div class="panel panel-left">
         <div class="box" id="weather">
             <div class="row">
                 <div id="weather-description" class="inline"></div>
@@ -24,6 +24,9 @@
                 <div id="temp" class="inline"></div>
             </div>
         </div>
+    </div>
+    <!-- Top-right stack: tracked tickers -->
+    <div class="panel panel-right">
         <div class="box stock" id="voo">
             <div class="ticker">VOO</div>
             <div class="price">—</div>
@@ -39,6 +42,8 @@
         <div id="clock"></div>
         <div id="date"></div>
     </div>
+    <!-- Bottom-right: sunrise / sunset, super subtle -->
+    <div id="sun"></div>
 
     <script>
         // Search on enter key event
@@ -186,11 +191,16 @@
                         console.log(json);
                         document.getElementById("temp").innerHTML = json.main.temp.toFixed(0) + "°";
                         document.getElementById("weather-description").innerHTML = json.weather[0].description;
-                        // Add city name display
-                        let cityName = document.createElement('div');
-                        cityName.className = 'city-name';
-                        cityName.innerHTML = `${json.name}, TX`;
-                        document.getElementById('weather').appendChild(cityName);
+                        // Sunrise / sunset come free with the same response (Unix UTC seconds)
+                        if (json.sys && json.sys.sunrise && json.sys.sunset) {
+                            const fmtSun = ts => {
+                                let d = new Date(ts * 1000),
+                                    h = d.getHours(), m = d.getMinutes();
+                                return ((h + 24) % 12 || 12) + ":" + (m < 10 ? "0" + m : m);
+                            };
+                            document.getElementById("sun").innerHTML =
+                                "☀ " + fmtSun(json.sys.sunrise) + " · 🌙 " + fmtSun(json.sys.sunset);
+                        }
                     } else {
                         console.error('Weather API Error:', xhr.status);
                         document.getElementById("temp").innerHTML = "N/A";

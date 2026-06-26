@@ -109,17 +109,18 @@ body {
     text-align: center;
 }
 
-/* Fixed top-left stack of info boxes (weather + tracked tickers) */
+/* Fixed top-corner stacks of info boxes */
 .panel {
     position: fixed;
     top: 1.5em;
-    left: 1.5em;
     z-index: 3;
     display: flex;
     flex-direction: column;
     align-items: stretch;   /* every box matches the width of the widest */
     gap: 0.9em;
 }
+.panel-left  { left: 1.5em; }   /* weather */
+.panel-right { right: 1.5em; }  /* tracked tickers */
 
 .box {
     min-width: 13em;
@@ -134,27 +135,46 @@ body {
     text-align: center;
 }
 
-/* ---- Stock / ETF boxes ---- */
+/* ---- Stock / ETF boxes: single compact line ---- */
+.box.stock {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.6em;
+    white-space: nowrap;
+    padding: 0.6em 1.4em;
+}
 .ticker {
     font-family: "Roboto Mono";
     font-size: 0.9rem;
     letter-spacing: 0.2rem;
     color: var(--nord7);
     opacity: 0.8;
-    margin-bottom: 4px;
 }
 .price {
     color: var(--nord6);
 }
 .change {
     font-size: 0.85rem;
-    margin-top: 3px;
 }
 .change.up   { color: var(--nord14); }   /* aurora green */
 .change.down { color: var(--nord11); }   /* aurora red */
 
 .inline {
     display: inline-block;
+}
+
+/* Sunrise / sunset — super subtle, tucked into the bottom-right corner */
+#sun {
+    position: fixed;
+    bottom: 1.5em;
+    right: 1.5em;
+    z-index: 3;
+    font-family: "Roboto Mono";
+    font-size: 0.8rem;
+    letter-spacing: 0.08rem;
+    color: var(--nord4);
+    opacity: 0.32;
 }
 
 @media only screen and (max-width: 960px) {
@@ -176,13 +196,4 @@ body {
         align-items: flex-start;
         padding: 1.5em 1em 0;
     }
-}
-
-.city-name {
-    font-family: "Roboto Mono";
-    font-size: 0.9rem;
-    color: var(--nord7);
-    opacity: 0.8;
-    margin-top: 5px;
-    text-align: center;
 }
