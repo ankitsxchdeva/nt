@@ -177,23 +177,39 @@ body {
     opacity: 0.32;
 }
 
+/* Narrow window (e.g. the browser taking up half a small screen): keep the
+   fixed corner layout — weather top-left, tickers stacked top-right, clock
+   centered — just scale everything down so the two corners don't collide. */
 @media only screen and (max-width: 960px) {
+    .panel { top: 1em; gap: 0.7em; }
+    .panel-left  { left: 1em; }
+    .panel-right { right: 1em; }
+    .box {
+        min-width: 0;            /* let each box shrink to its content */
+        font-size: 1rem;
+        padding: 0.7em 1.1em;
+    }
+    .box.stock { padding: 0.5em 1.1em; gap: 0.5em; }
+    .ticker { font-size: 0.78rem; letter-spacing: 0.12rem; }
+    .price  { font-size: 0.95rem; }
+    .change { font-size: 0.72rem; }
+    #clock { font-size: 5rem; }
+    #date  { font-size: 0.95rem; }
+}
+
+/* Too narrow for two corners side by side (phones): fall back to a centered
+   stack so the weather and tickers don't overlap. */
+@media only screen and (max-width: 430px) {
     body { overflow: auto; }
-    .container {
-        height: auto;
-        padding: 4em 1em;
-    }
-    #clock {
-        font-size: 4.5rem;
-        margin-top: 1em;
-    }
-    /* Drop the panel into normal flow so it doesn't cover the clock */
+    .container { height: auto; padding: 5em 1em 3em; }
+    #clock { font-size: 3.8rem; }
     .panel {
         position: static;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
         align-items: flex-start;
-        padding: 1.5em 1em 0;
+        gap: 0.6em;
     }
+    .panel-right { width: 100%; }
 }
