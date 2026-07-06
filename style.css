@@ -150,7 +150,11 @@ body {
     letter-spacing: 0.2rem;
     color: var(--nord7);
     opacity: 0.8;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
 }
+.ticker:hover { opacity: 1; }
 .price {
     color: var(--nord6);
 }
