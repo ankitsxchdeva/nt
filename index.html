@@ -179,6 +179,15 @@
             else draw();
         })();
 
+        // Paint the clock + date right away so the entrance animation lands on
+        // real content — window.onload can lag behind while web fonts load.
+        const tick = () => {
+            document.getElementById("clock").innerHTML = getTime();
+            updateDate();
+        };
+        tick();
+        setInterval(tick, 1000);
+
         window.onload = () => {
             let xhr = new XMLHttpRequest();
             // Weather is fetched through a Cloudflare Worker proxy that keeps the
@@ -217,14 +226,6 @@
             // Tracked tickers, refreshed alongside the page load
             loadStock("VOO", "voo");
             loadStock("SMH", "smh");
-            // Set up the clock + date
-            document.getElementById("clock").innerHTML = getTime();
-            updateDate();
-            // Set clock interval to tick clock
-            setInterval( () => {
-                document.getElementById("clock").innerHTML = getTime();
-                updateDate();
-            },1000);
         }
 
         document.addEventListener("keydown", event => {

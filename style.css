@@ -181,6 +181,46 @@ body {
     opacity: 0.32;
 }
 
+/* ---- Page-load entrance: a soft, staggered choreography ----
+   Everything begins hidden (animation-fill-mode: both applies the `from`
+   state during the delay), then eases in: the starfield blooms, the clock
+   rises and focuses, and the corner panels settle down one after another.
+   Each keyframe ends at the element's own resting opacity so nothing snaps. */
+@keyframes field-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes clock-in {
+    from { opacity: 0; transform: translateY(22px) scale(0.985); filter: blur(8px); }
+    to   { opacity: 1; transform: none;                          filter: blur(0);   }
+}
+@keyframes date-in {
+    from { opacity: 0;    transform: translateY(14px); filter: blur(4px); }
+    to   { opacity: 0.75; transform: none;             filter: blur(0);   }
+}
+@keyframes box-in {
+    from { opacity: 0; transform: translateY(-14px); filter: blur(3px); }
+    to   { opacity: 1; transform: none;              filter: blur(0);   }
+}
+@keyframes sun-in {
+    from { opacity: 0;    transform: translateY(8px); }
+    to   { opacity: 0.32; transform: none;            }
+}
+
+/* smooth, elegant deceleration (easeOutQuint / easeOutExpo) */
+#snow    { animation: field-in 1.0s ease-out both; }
+#clock   { animation: clock-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
+#date    { animation: date-in  0.50s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
+#weather { animation: box-in   0.45s cubic-bezier(0.16, 1, 0.30, 1) 0.22s both; }
+#voo     { animation: box-in   0.45s cubic-bezier(0.16, 1, 0.30, 1) 0.30s both; }
+#smh     { animation: box-in   0.45s cubic-bezier(0.16, 1, 0.30, 1) 0.38s both; }
+#sun     { animation: sun-in   0.6s  ease-out 0.46s both; }
+
+/* Honour reduced-motion: skip the entrance entirely, show final state */
+@media (prefers-reduced-motion: reduce) {
+    #snow, #clock, #date, #weather, #voo, #smh, #sun { animation: none; }
+}
+
 /* Narrow window (e.g. the browser taking up half a small screen): keep the
    fixed corner layout — weather top-left, tickers stacked top-right, clock
    centered — just scale everything down so the two corners don't collide. */
