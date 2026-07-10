@@ -67,7 +67,7 @@ body {
     font-size: 7.0rem;
     line-height: 1;
     letter-spacing: 0.3rem;
-    color: var(--nord6);
+    color: var(--nord8);
     margin-bottom: .1em;
 }
 
@@ -75,7 +75,7 @@ body {
     font-family: "Roboto Mono";
     font-size: 1.05rem;
     letter-spacing: 0.25rem;
-    color: var(--nord4);
+    color: var(--nord9);
     opacity: 0.75;
     margin-bottom: 1.6em;
 }
@@ -179,6 +179,12 @@ body {
     letter-spacing: 0.08rem;
     color: var(--nord4);
     opacity: 0.32;
+}
+
+/* Text glow — a faint self-colored halo, echoing the particles' shadowBlur;
+   currentColor keeps each element glowing in its own hue. */
+#clock, #date, #sun, #search-field, .box, .ticker, .price, .change {
+    text-shadow: 0 0 0.09em color-mix(in srgb, currentColor 35%, transparent);
 }
 
 /* ---- Page-load entrance: a soft, staggered choreography ----
