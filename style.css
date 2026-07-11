@@ -168,38 +168,35 @@ body {
     display: inline-block;
 }
 
-/* News link — same subtle grey, one line above the sunrise/sunset clock */
-#news {
-    position: fixed;
-    bottom: 3.2em;
-    right: 1.5em;
-    z-index: 3;
-    font-family: "Roboto Mono";
-    font-size: 0.8rem;
-    letter-spacing: 0.08rem;
-    color: var(--nord4);
-    opacity: 0.32;
-    text-decoration: none;
-    transition: opacity 0.15s ease;
-}
-#news:hover { opacity: 0.7; }
-
-/* Sunrise / sunset — super subtle, tucked into the bottom-right corner */
-#sun {
+/* Bottom-right corner stack — home + news links above sunrise over sunset,
+   all in the same super-subtle grey */
+#corner {
     position: fixed;
     bottom: 1.5em;
     right: 1.5em;
     z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5em;
     font-family: "Roboto Mono";
     font-size: 0.8rem;
     letter-spacing: 0.08rem;
     color: var(--nord4);
-    opacity: 0.32;
+    text-align: right;
 }
+#home, #news {
+    color: inherit;
+    opacity: 0.32;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+}
+#home:hover, #news:hover { opacity: 0.7; }
+#sun { opacity: 0.32; }
 
 /* Text glow — a faint self-colored halo, echoing the particles' shadowBlur;
    currentColor keeps each element glowing in its own hue. */
-#clock, #date, #sun, #news, #search-field, .box, .ticker, .price, .change {
+#clock, #date, #sun, #news, #home, #search-field, .box, .ticker, .price, .change {
     text-shadow: 0 0 0.09em color-mix(in srgb, currentColor 35%, transparent);
 }
 
@@ -239,10 +236,11 @@ body {
 #sun     { animation: sun-in   0.6s  ease-out 0.46s both; }
 /* `backwards` (not `both`) so the fill doesn't pin opacity and block :hover */
 #news    { animation: sun-in   0.6s  ease-out 0.52s backwards; }
+#home    { animation: sun-in   0.6s  ease-out 0.58s backwards; }
 
 /* Honour reduced-motion: skip the entrance entirely, show final state */
 @media (prefers-reduced-motion: reduce) {
-    #snow, #clock, #date, #weather, #voo, #smh, #sun, #news { animation: none; }
+    #snow, #clock, #date, #weather, #voo, #smh, #sun, #news, #home { animation: none; }
 }
 
 /* Narrow window (e.g. the browser taking up half a small screen): keep the

@@ -42,9 +42,12 @@
         <div id="clock"></div>
         <div id="date"></div>
     </div>
-    <!-- Bottom-right: news link + sunrise / sunset, super subtle -->
-    <a id="news" href="https://ankitsachdeva.com/lede/" target="_blank" rel="noopener">news</a>
-    <div id="sun"></div>
+    <!-- Bottom-right stack: home + news links, sunrise over sunset, super subtle -->
+    <div id="corner">
+        <a id="home" href="https://ankit.casa" target="_blank" rel="noopener">home</a>
+        <a id="news" href="https://ankitsachdeva.com/lede/" target="_blank" rel="noopener">news</a>
+        <div id="sun"></div>
+    </div>
 
     <script>
         // Search on enter key event
@@ -209,7 +212,7 @@
                                 return ((h + 24) % 12 || 12) + ":" + (m < 10 ? "0" + m : m);
                             };
                             document.getElementById("sun").innerHTML =
-                                "☀ " + fmtSun(json.sys.sunrise) + " · ☾ " + fmtSun(json.sys.sunset);
+                                "☀ " + fmtSun(json.sys.sunrise) + "<br>☾ " + fmtSun(json.sys.sunset);
                         }
                     } else {
                         console.error('Weather API Error:', xhr.status);
