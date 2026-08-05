@@ -231,8 +231,10 @@ body {
 #clock   { animation: clock-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
 #date    { animation: date-in  0.50s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
 #weather { animation: box-in   0.45s cubic-bezier(0.16, 1, 0.30, 1) 0.22s both; }
-#voo     { animation: box-in   0.45s cubic-bezier(0.16, 1, 0.30, 1) 0.30s both; }
-#smh     { animation: box-in   0.45s cubic-bezier(0.16, 1, 0.30, 1) 0.38s both; }
+/* three tickers now, so tighten the stagger to 0.06s and keep #sun's cue at 0.46s */
+#splg    { animation: box-in   0.45s cubic-bezier(0.16, 1, 0.30, 1) 0.28s both; }
+#qqq     { animation: box-in   0.45s cubic-bezier(0.16, 1, 0.30, 1) 0.34s both; }
+#smh     { animation: box-in   0.45s cubic-bezier(0.16, 1, 0.30, 1) 0.40s both; }
 #sun     { animation: sun-in   0.6s  ease-out 0.46s both; }
 /* `backwards` (not `both`) so the fill doesn't pin opacity and block :hover */
 #news    { animation: sun-in   0.6s  ease-out 0.52s backwards; }
@@ -240,7 +242,7 @@ body {
 
 /* Honour reduced-motion: skip the entrance entirely, show final state */
 @media (prefers-reduced-motion: reduce) {
-    #snow, #clock, #date, #weather, #voo, #smh, #sun, #news, #home { animation: none; }
+    #snow, #clock, #date, #weather, #splg, #qqq, #smh, #sun, #news, #home { animation: none; }
 }
 
 /* Narrow window (e.g. the browser taking up half a small screen): keep the

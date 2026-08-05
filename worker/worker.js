@@ -9,8 +9,8 @@
 // key never ships to the client and we sidestep CORS. Responses are cached so
 // we stay well within the free tier.
 //
-//   GET /            -> current weather (default)
-//   GET /?symbol=VOO -> latest quote for an ETF/stock (Yahoo Finance, no key)
+//   GET /             -> current weather (default)
+//   GET /?symbol=SPLG -> latest quote for an ETF/stock (Yahoo Finance, no key)
 
 const ALLOWED_ORIGIN = "https://ankitsachdeva.com";
 const WEATHER_URL =

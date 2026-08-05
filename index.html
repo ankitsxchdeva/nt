@@ -27,8 +27,13 @@
     </div>
     <!-- Top-right stack: tracked tickers -->
     <div class="panel panel-right">
-        <div class="box stock" id="voo">
-            <a class="ticker" href="https://google.com/search?q=VOO+stock" target="_blank" rel="noopener">VOO</a>
+        <div class="box stock" id="splg">
+            <a class="ticker" href="https://google.com/search?q=SPLG+stock" target="_blank" rel="noopener">SPLG</a>
+            <div class="price">—</div>
+            <div class="change"></div>
+        </div>
+        <div class="box stock" id="qqq">
+            <a class="ticker" href="https://google.com/search?q=QQQ+stock" target="_blank" rel="noopener">QQQ</a>
             <div class="price">—</div>
             <div class="change"></div>
         </div>
@@ -228,7 +233,8 @@
             }
             xhr.send();
             // Tracked tickers, refreshed alongside the page load
-            loadStock("VOO", "voo");
+            loadStock("SPLG", "splg");
+            loadStock("QQQ", "qqq");
             loadStock("SMH", "smh");
         }
 

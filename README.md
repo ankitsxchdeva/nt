@@ -25,11 +25,11 @@ register one at the dashboard link it prints (one-time), then re-run
 Then put the deployed `*.workers.dev` URL into the `xhr.open(...)` call in
 `index.html` (replace `YOUR-SUBDOMAIN`).
 
-## Tickers (VOO / SMH)
-The top-left stack shows the latest quote for a couple of ETFs underneath the
-weather. Quotes go through the **same** Cloudflare Worker (`?symbol=VOO`), which
-pulls them from Yahoo Finance — no API key needed. Change the symbols in the
-`loadStock(...)` calls in `index.html` to track different tickers.
+## Tickers (SPLG / QQQ / SMH)
+The top-right stack shows the latest quote for a few ETFs. Quotes go through the
+**same** Cloudflare Worker (`?symbol=SPLG`), which pulls them from Yahoo Finance
+— no API key needed. Change the symbols in the `loadStock(...)` calls in
+`index.html` to track different tickers.
 
 ## Personalization
 Feel free to use this for your own use. You will need to:
