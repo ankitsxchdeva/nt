@@ -1,34 +1,38 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-@import url('https://fonts.googleapis.com/css?family=Anton');
-@font-face {
-  font-family: sf-apple;
-  font-weight: 400;
-  src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff");
-}
+/* nt — design language: ~/Documents/design/DESIGN.md (lane: ambient).
+ * Canonical dark row (~/Documents/design/tokens.css): night plum room, one
+ * wisteria accent kept rare; chroma lives in the particle field and the two
+ * data hues. Single-theme dark is licensed by the ambient lane. */
 
-/* ---- The official Nord palette (https://www.nordtheme.com) ---- */
 :root {
-    /* Polar Night */
-    --nord0: #2e3440;
-    --nord1: #3b4252;
-    --nord2: #434c5e;
-    --nord3: #4c566a;
-    /* Snow Storm */
-    --nord4: #d8dee9;
-    --nord5: #e5e9f0;
-    --nord6: #eceff4;
-    /* Frost */
-    --nord7: #8fbcbb;
-    --nord8: #88c0d0;
-    --nord9: #81a1c1;
-    --nord10: #5e81ac;
-    /* Aurora */
-    --nord11: #bf616a;
-    --nord12: #d08770;
-    --nord13: #ebcb8b;
-    --nord14: #a3be8c;
-    --nord15: #b48ead;
+    /* canonical dark row */
+    --bg: #1e1c22;            /* night plum: page background */
+    --fg: #e8e4f4;            /* pale lavender: primary text, the clock */
+    --muted: #8e8aab;         /* deep stone lilac: secondary text, AA on bg */
+    --border: #413f54;        /* aubergine: glass tint base */
+    --accent: #8b87c8;        /* wisteria: interactivity/state only */
+    --accent-hover: #9db8dc;  /* sky indigo: focus ring */
+
+    /* data hues (spec §5): the only green/warm on the page */
+    --up: #a3be8c;
+    --down: #bf616a;
+
+    /* type: one family carries the page; mono is earned (data, ids, numerals) */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    /* the canonical type ladder */
+    --text-meta: 11px;
+    --text-label: 12px;
+    --text-small: 13px;
+    --text-body: 15px;
+    --text-lede: 17px;
+
+    /* the one clock: every state transition runs on this */
+    --t: 150ms cubic-bezier(0.25, 1, 0.5, 1);
+
+    /* focus: visible state, never suppressed without replacement */
+    --focus-ring: 2px solid var(--accent-hover);
+    --focus-offset: 3px;
 }
 
 * { box-sizing: border-box; }
@@ -38,12 +42,28 @@ html, body {
 }
 
 body {
-    background-color: var(--nord0);
-    margin: 0px;
+    background-color: var(--bg);
+    margin: 0;
     overflow: hidden;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--fg);
 }
 
-/* Particle field: drifting, softly glowing Frost points over flat Polar Night */
+/* selection: inverted accent, tinted on both sides */
+::selection {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+/* one ring for everything */
+:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    border-radius: 2px;
+}
+
+/* Particle field: drifting, softly glowing lavender points over flat night plum */
 #snow {
     position: fixed;
     inset: 0;
@@ -56,26 +76,28 @@ body {
     z-index: 2;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
 }
 
+/* The clock is the licensed oversized ambient datum (content, not display
+   type); tabular-nums keeps it from jittering as digits change. */
 #clock {
-    font-family: sf-apple;
-    font-size: 7.0rem;
+    font-size: 7rem;
     line-height: 1;
     letter-spacing: 0.3rem;
-    color: var(--nord8);
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
     margin-bottom: .1em;
 }
 
 #date {
-    font-family: "Roboto Mono";
-    font-size: 1.05rem;
+    font-size: var(--text-lede);
     letter-spacing: 0.25rem;
-    color: var(--nord9);
+    color: var(--muted);
     opacity: 0.75;
     margin-bottom: 1.6em;
 }
@@ -83,31 +105,34 @@ body {
 #search {
     width: 100%;
     height: 100vh;
-    background-color: rgba(46, 52, 64, 0.72);
+    height: 100dvh;
+    background-color: color-mix(in srgb, var(--bg) 72%, transparent);
+    -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
     display: none;
     position: absolute;
     z-index: 10;
-    box-sizing: border-box;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
+/* Oversized too, licensed while its overlay is the visible room. */
 #search-field {
     width: 90%;
     padding: .75em 1em;
-    box-sizing: border-box;
-    background-color: rgba(67, 76, 94, 0.85);
-    border: solid 0px var(--nord1);
-    font-family: sf-apple;
+    background-color: color-mix(in srgb, var(--border) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    font-family: var(--font-sans);
     font-size: 4rem;
-    color: var(--nord5);
-    outline: none;
+    color: var(--fg);
     border-radius: 8px;
     margin-bottom: 1em;
     text-align: center;
+    transition: border-color var(--t);
 }
+#search-field::placeholder { color: color-mix(in srgb, var(--fg) 35%, transparent); }
+#search-field:focus { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
 
 /* Fixed top-corner stacks of info boxes */
 .panel {
@@ -124,16 +149,19 @@ body {
 
 .box {
     min-width: 13em;
-    background-color: rgba(67, 76, 94, 0.45);
+    background-color: color-mix(in srgb, var(--border) 45%, transparent);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(136, 192, 208, 0.18);
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
     padding: 0.9em 1.4em;
     border-radius: 12px;
-    font-family: "Roboto Mono";
-    font-size: 1.2rem;
-    color: var(--nord8);
+    font-size: var(--text-body);
+    color: var(--fg);
     text-align: center;
 }
+
+/* mono is earned: ids, prices, numerals */
+#temp, .ticker, .price, .change, #sun { font-family: var(--font-mono); }
 
 /* ---- Stock / ETF boxes: single compact line ---- */
 .box.stock {
@@ -145,24 +173,22 @@ body {
     padding: 0.6em 1.4em;
 }
 .ticker {
-    font-family: "Roboto Mono";
-    font-size: 0.9rem;
+    font-size: var(--text-small);
     letter-spacing: 0.2rem;
-    color: var(--nord7);
+    color: var(--muted);
     opacity: 0.8;
     text-decoration: none;
-    cursor: pointer;
-    transition: opacity 0.15s ease;
+    transition: opacity var(--t);
 }
 .ticker:hover { opacity: 1; }
 .price {
-    color: var(--nord6);
+    color: var(--fg);
 }
 .change {
-    font-size: 0.85rem;
+    font-size: var(--text-label);
 }
-.change.up   { color: var(--nord14); }   /* aurora green */
-.change.down { color: var(--nord11); }   /* aurora red */
+.change.up   { color: var(--up); }    /* data hue, not chrome */
+.change.down { color: var(--down); }  /* data hue, not chrome */
 
 .inline {
     display: inline-block;
@@ -179,20 +205,29 @@ body {
     flex-direction: column;
     align-items: flex-end;
     gap: 0.5em;
-    font-family: "Roboto Mono";
-    font-size: 0.8rem;
+    font-size: var(--text-label);
     letter-spacing: 0.08rem;
-    color: var(--nord4);
+    color: var(--fg);
     text-align: right;
 }
 #home, #news {
     color: inherit;
     opacity: 0.32;
     text-decoration: none;
-    transition: opacity 0.15s ease;
+    transition: opacity var(--t);
 }
 #home:hover, #news:hover { opacity: 0.7; }
 #sun { opacity: 0.32; }
+
+/* no-JS baseline: say calmly what doesn't work */
+#nojs {
+    position: fixed;
+    bottom: 1.5em;
+    left: 1.5em;
+    z-index: 3;
+    font-size: var(--text-meta);
+    color: var(--muted);
+}
 
 /* Text glow — a faint self-colored halo, echoing the particles' shadowBlur;
    currentColor keeps each element glowing in its own hue. */
@@ -240,9 +275,15 @@ body {
 #news    { animation: sun-in   0.6s  ease-out 0.52s backwards; }
 #home    { animation: sun-in   0.6s  ease-out 0.58s backwards; }
 
-/* Honour reduced-motion: skip the entrance entirely, show final state */
+/* Reduced motion: everything lands instantly, entrances included */
 @media (prefers-reduced-motion: reduce) {
-    #snow, #clock, #date, #weather, #splg, #qqq, #smh, #sun, #news, #home { animation: none; }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* Narrow window (e.g. the browser taking up half a small screen): keep the
@@ -254,15 +295,11 @@ body {
     .panel-right { right: 1em; }
     .box {
         min-width: 0;            /* let each box shrink to its content */
-        font-size: 1rem;
         padding: 0.7em 1.1em;
     }
     .box.stock { padding: 0.5em 1.1em; gap: 0.5em; }
-    .ticker { font-size: 0.78rem; letter-spacing: 0.12rem; }
-    .price  { font-size: 0.95rem; }
-    .change { font-size: 0.72rem; }
     #clock { font-size: 5rem; }
-    #date  { font-size: 0.95rem; }
+    #date  { font-size: var(--text-body); }
 }
 
 /* Too narrow for two corners side by side (phones): fall back to a centered

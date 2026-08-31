@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>Home</title>
+    <title>home</title>
     <link rel="stylesheet" href="style.css">
-    <link href="favicon.png" rel="shortcut icon" type="image/x-icon" />
 </head>
 <body>
+    <noscript><div id="nojs">clock, weather, and search need javascript.</div></noscript>
     <div id="search">
-        <input id="search-field" type="text" name="search-field"/>
+        <input id="search-field" type="text" name="search-field" aria-label="search" placeholder="search" autocomplete="off" spellcheck="false"/>
     </div>
-    <!-- Drifting, softly glowing Frost particles over flat Polar Night -->
+    <!-- Drifting, softly glowing lavender particles over flat night plum -->
     <canvas id="snow" aria-hidden="true"></canvas>
     <!-- Top-left: weather -->
     <div class="panel panel-left">
         <div class="box" id="weather">
             <div class="row">
                 <div id="weather-description" class="inline"></div>
-                <div class="inline">-</div>
+                <div class="inline" id="weather-sep">-</div>
                 <div id="temp" class="inline"></div>
             </div>
         </div>
@@ -55,11 +54,11 @@
     </div>
 
     <script>
-        // Search on enter key event
+        // Search on enter
         document.getElementById("search-field").addEventListener("keydown",  event => {
-            if (event.keyCode === 13) {
-                var val = document.getElementById("search-field").value;
-                window.open("https://google.com/search?q=" + val);
+            if (event.key === "Enter") {
+                var val = document.getElementById("search-field").value.trim();
+                if (val) window.open("https://google.com/search?q=" + encodeURIComponent(val));
             }
         });
         // Get current time and format
@@ -113,20 +112,23 @@
             xhr.send();
         }
 
-        // ---- Abstract Frost particle field: drifting, glowing, twinkling points ----
+        // ---- Abstract particle field: drifting, glowing, twinkling points ----
         (function particles() {
             const canvas = document.getElementById("snow"),
                   ctx = canvas.getContext("2d");
-            // Nord Frost + Aurora — all the light/color comes from the particles themselves
+            // Canonical dark-row lights — pale lavender, stone lilac, wisteria,
+            // sky indigo, plus rare pale-coral sparks (editorial ink). All the
+            // light/color comes from the particles themselves; weight favors
+            // quiet lavender dust over the rarer colored sparks.
             const palette = [
-                "143, 188, 187",  // frost  nord7
-                "136, 192, 208",  // frost  nord8
-                "129, 161, 193",  // frost  nord9
-                "94, 129, 172",   // frost  nord10
-                "163, 190, 140",  // aurora green  nord14
-                "180, 142, 173",  // aurora purple nord15
-                "235, 203, 139",  // aurora yellow nord13
-                "216, 222, 233"   // snow storm    nord4
+                "232, 228, 244",  // pale lavender
+                "232, 228, 244",  // pale lavender
+                "232, 228, 244",  // pale lavender
+                "142, 138, 171",  // stone lilac
+                "142, 138, 171",  // stone lilac
+                "139, 135, 200",  // wisteria
+                "157, 184, 220",  // sky indigo
+                "222, 145, 128"   // pale coral, editorial ink: the rare warm spark
             ];
             let pts = [], w, h;
             const resize = () => {
@@ -197,6 +199,13 @@
         tick();
         setInterval(tick, 1000);
 
+        // Weather failure renders as one muted lowercase line naming the retry.
+        const weatherFail = () => {
+            document.getElementById("weather-description").innerHTML = "weather unavailable, reload to retry";
+            document.getElementById("weather-sep").style.display = "none";
+            document.getElementById("temp").innerHTML = "";
+        }
+
         window.onload = () => {
             let xhr = new XMLHttpRequest();
             // Weather is fetched through a Cloudflare Worker proxy that keeps the
@@ -206,7 +215,6 @@
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         let json = JSON.parse(xhr.responseText);
-                        console.log(json);
                         document.getElementById("temp").innerHTML = json.main.temp.toFixed(0) + "°";
                         document.getElementById("weather-description").innerHTML = json.weather[0].description;
                         // Sunrise / sunset come free with the same response (Unix UTC seconds)
@@ -221,15 +229,13 @@
                         }
                     } else {
                         console.error('Weather API Error:', xhr.status);
-                        document.getElementById("temp").innerHTML = "N/A";
-                        document.getElementById("weather-description").innerHTML = "Weather unavailable";
+                        weatherFail();
                     }
                 }
             }
             xhr.onerror = () => {
                 console.error('Weather API Request Failed');
-                document.getElementById("temp").innerHTML = "N/A";
-                document.getElementById("weather-description").innerHTML = "Weather unavailable";
+                weatherFail();
             }
             xhr.send();
             // Tracked tickers, refreshed alongside the page load
@@ -239,12 +245,15 @@
         }
 
         document.addEventListener("keydown", event => {
-            if (event.keyCode == 32) {          // Spacebar code to open search
+            let field = document.getElementById('search-field');
+            if (event.key === " " && !event.metaKey && !event.ctrlKey && !event.altKey) {
+                if (event.target === field) return;   // already typing in the overlay
+                event.preventDefault();               // keep the page from scrolling
                 document.getElementById('search').style.display = 'flex';
-                document.getElementById('search-field').focus();
-            } else if (event.keyCode == 27) {   // Esc to close search
-                document.getElementById('search-field').value = '';
-                document.getElementById('search-field').blur();
+                field.focus();
+            } else if (event.key === "Escape") {      // Esc to close search
+                field.value = '';
+                field.blur();
                 document.getElementById('search').style.display = 'none';
             }
         });
