@@ -36,6 +36,26 @@
             <div class="price">—</div>
             <div class="change"></div>
         </div>
+        <div class="box stock" id="btc">
+            <a class="ticker" href="https://google.com/search?q=BTC+price" target="_blank" rel="noopener">BTC</a>
+            <div class="price">—</div>
+            <div class="change"></div>
+        </div>
+        <div class="box stock" id="eth">
+            <a class="ticker" href="https://google.com/search?q=ETH+price" target="_blank" rel="noopener">ETH</a>
+            <div class="price">—</div>
+            <div class="change"></div>
+        </div>
+        <div class="box stock" id="rvi">
+            <a class="ticker" href="https://google.com/search?q=RVI+stock" target="_blank" rel="noopener">RVI</a>
+            <div class="price">—</div>
+            <div class="change"></div>
+        </div>
+        <div class="box stock" id="rvii">
+            <a class="ticker" href="https://google.com/search?q=RVII+stock" target="_blank" rel="noopener">RVII</a>
+            <div class="price">—</div>
+            <div class="change"></div>
+        </div>
     </div>
     <div class="container">
         <div id="clock"></div>
@@ -236,6 +256,10 @@
             // Tracked tickers, refreshed alongside the page load
             loadStock("QQQ", "qqq");
             loadStock("SMH", "smh");
+            loadStock("BTC-USD", "btc");
+            loadStock("ETH-USD", "eth");
+            loadStock("RVI", "rvi");
+            loadStock("RVII", "rvii");
         }
 
         document.addEventListener("keydown", event => {
